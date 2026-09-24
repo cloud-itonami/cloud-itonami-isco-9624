@@ -1,5 +1,5 @@
 (ns waterfirewood.governor-test
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [kotoba.test :refer [deftest is testing]]
             [waterfirewood.store :as store]
             [waterfirewood.advisor :as advisor]
             [waterfirewood.governor :as governor]))
