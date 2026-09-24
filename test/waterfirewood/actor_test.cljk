@@ -1,5 +1,5 @@
 (ns waterfirewood.actor-test
-  (:require [clojure.test :refer [deftest is testing]]
+  (:require [kotoba.test :refer [deftest is testing]]
             [waterfirewood.actor :as actor]
             [waterfirewood.store :as store]))
 
