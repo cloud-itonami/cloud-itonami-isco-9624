@@ -1,0 +1,40 @@
+;; What this vertical's robot physically does, declared for
+;; kotoba.robotics.process (kotoba-lang/robotics). `kbb -M:physics` runs it.
+;;
+;; README "Robotics premise": a site scheduling/logistics robot coordinates a
+;; water-and-firewood-collection crew (ISCO 9624). The physical work is
+;; hauling water up from the source, emptying the collected water into the
+;; household storage, and lifting cut firewood bundles onto the carrier.
+;;
+;; Every number without a cited source is marked `estimate` in its :basis.
+;; Replacing an estimate with a sourced value is this bot's growth work.
+{:physics/schema "itonami.physical-ai.spec.v1"
+ :repo "cloud-itonami/cloud-itonami-isco-9624"
+ :cases
+ [{:id :water-haul-up-footpath
+   :kind :transport
+   :procedure "tracked carrier hauls 200 litres of water in jerrycans up the footpath from the spring to the village storage"
+   :params {:mass-kg 120.0 :payload-kg 200.0 :distance-m 400.0 :v-max-mps 1.0 :a-max-mps2 0.4
+            :brake-decel-mps2 0.8 :drive-force-n 900.0 :crr 0.08
+            :cog-height-m 0.55 :support-half-length-m 0.40 :max-time-s 3600.0}
+   :sweep {:param :slope-deg :values [0.0 4.0 8.0 12.0 16.0]}
+   :quantity :cycle-time-s
+   :limit {:max 480.0 :basis "estimate: one haul within an 8-minute leg so a crew shift covers its household water round"}
+   :boundary {:lo 0.0 :hi 25.0}}
+  {:id :carrier-tank-to-household-storage
+   :kind :tank-drain
+   :procedure "the carrier's water tank gravity-drains through its outlet valve into the household storage drum"
+   :params {:tank-area-m2 0.40 :h0-m 0.50 :h-target-m 0.02 :cd 0.62 :dt-s 0.5 :max-time-s 7200.0}
+   :sweep {:param :orifice-area-m2 :values [0.00013 0.00020 0.00031 0.00049 0.00080]}
+   :quantity :time-to-target-s
+   :limit {:max 300.0 :basis "estimate: unloading at one household within 5 minutes of the round"}
+   :boundary {:lo 0.0001 :hi 0.002}}
+  {:id :firewood-bundle-onto-carrier
+   :kind :manipulator
+   :procedure "arm lifts a tied firewood bundle from the ground onto the carrier bed"
+   :params {:l1-m 0.60 :l2-m 0.50 :m1-kg 7.0 :m2-kg 5.0
+            :from [0.70 -0.30] :to [0.30 0.60] :duration-s 3.0 :steps 600}
+   :sweep {:param :payload-kg :values [5.0 10.0 15.0 20.0 25.0]}
+   :quantity :peak-tau1-nm
+   :limit {:max 250.0 :basis "estimate: continuous shoulder torque of a 20 kg-class industrial arm"}
+   :boundary {:lo 1.0 :hi 80.0}}]}
